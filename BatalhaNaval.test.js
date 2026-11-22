@@ -1,10 +1,87 @@
-const { BatalhaNaval } = require('../src/BatalhaNaval');
-function jogoConfigurado() { const j = new BatalhaNaval(); j.colocarNavio('Porta-aviões', 5, { linha: 0, coluna: 0 }); j.colocarNavio('Encouraçado', 4, { linha: 2, coluna: 0 }); j.colocarNavio('Submarino', 3, { linha: 4, coluna: 0 }); j.colocarNavio('Destroyer', 2, { linha: 6, coluna: 0 }); return j; }
-describe('Batalha Naval 10 x 10', () => {
-    test('posiciona os quatro navios exigidos', () => { const j = jogoConfigurado(); expect(j.navios.map(n => n.tamanho)).toEqual([5, 4, 3, 2]); });
-    test('retorna água quando não há navio', () => { expect(jogoConfigurado().atirar(9, 9)).toBe('agua'); });
-    test('retorna acerto e depois afundado', () => { const j = jogoConfigurado(); expect(j.atirar(0, 0)).toBe('acerto'); expect(j.atirar(0, 1)).toBe('acerto'); expect(j.atirar(0, 2)).toBe('acerto'); expect(j.atirar(0, 3)).toBe('acerto'); expect(j.atirar(0, 4)).toBe('afundado'); });
-    test('rejeita sobreposição', () => { const j = new BatalhaNaval(); j.colocarNavio('A', 5, { linha: 0, coluna: 0 }); expect(() => j.colocarNavio('B', 2, { linha: 0, coluna: 2 })).toThrow('sobrepor'); });
-    test('rejeita navio fora do tabuleiro', () => { expect(() => new BatalhaNaval().colocarNavio('A', 5, { linha: 9, coluna: 9 })).toThrow('fora'); });
-    test('rejeita tiro repetido', () => { const j = jogoConfigurado(); j.atirar(9, 9); expect(() => j.atirar(9, 9)).toThrow('já foi'); });
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { BatalhaNaval } = require('./BatalhaNaval');
+
+function criarJogoConfigurado() {
+    const jogo = new BatalhaNaval();
+    jogo.colocarNavio('Navio 1', 5, { linha: 0, coluna: 0 });
+    jogo.colocarNavio('Navio 2', 4, { linha: 2, coluna: 0 });
+    jogo.colocarNavio('Navio 3', 3, { linha: 4, coluna: 0 });
+    jogo.colocarNavio('Navio 4', 2, { linha: 6, coluna: 0 });
+    return jogo;
+}
+
+test('posiciona quatro navios de comprimentos permitidos', () => {
+    const jogo = criarJogoConfigurado();
+    assert.deepEqual(jogo.navios.map((navio) => navio.tamanho), [5, 4, 3, 2]);
+});
+
+test('retorna agua para uma casa vazia', () => {
+    assert.equal(criarJogoConfigurado().atirar(9, 9), 'agua');
+});
+
+test('retorna acerto e depois afundado para o navio atingido', () => {
+    const jogo = criarJogoConfigurado();
+    for (let coluna = 0; coluna < 4; coluna += 1) {
+        assert.equal(jogo.atirar(0, coluna), 'acerto');
+    }
+    assert.equal(jogo.atirar(0, 4), 'afundado');
+});
+
+test('rejeita sobreposição entre navios', () => {
+    const jogo = new BatalhaNaval();
+    jogo.colocarNavio('Navio A', 5, { linha: 0, coluna: 0 });
+    assert.throws(
+        () => jogo.colocarNavio('Navio B', 2, { linha: 0, coluna: 2 }),
+        /sobrepor/
+    );
+});
+
+test('rejeita navio fora do tabuleiro e tamanho desconhecido', () => {
+    const jogo = new BatalhaNaval();
+    assert.throws(
+        () => jogo.colocarNavio('Navio A', 5, { linha: 9, coluna: 9 }),
+        /fora do tabuleiro/
+    );
+    assert.throws(
+        () => jogo.colocarNavio('Navio B', 6, { linha: 0, coluna: 0 }),
+        /Tamanho de navio inválido/
+    );
+});
+
+test('aceita orientação vertical e rejeita direção não suportada', () => {
+    const jogo = new BatalhaNaval();
+    const navio = jogo.colocarNavio('Navio vertical', 3, { linha: 1, coluna: 2 }, 'vertical');
+    assert.deepEqual(navio.casas, ['1,2', '2,2', '3,2']);
+    assert.throws(
+        () => jogo.colocarNavio('Navio diagonal', 2, { linha: 0, coluna: 0 }, 'diagonal'),
+        /Direção inválida/
+    );
+});
+
+test('rejeita coordenadas fracionárias e tiros fora do tabuleiro', () => {
+    const jogo = new BatalhaNaval();
+    assert.throws(
+        () => jogo.colocarNavio('Navio A', 2, { linha: 0.5, coluna: 0 }),
+        /Posição inicial inválida/
+    );
+    assert.throws(() => jogo.atirar(0.5, 0), /Posição inválida/);
+    assert.throws(() => jogo.atirar(10, 0), /Posição inválida/);
+});
+
+test('rejeita repetir um tiro', () => {
+    const jogo = criarJogoConfigurado();
+    assert.equal(jogo.atirar(9, 9), 'agua');
+    assert.throws(() => jogo.atirar(9, 9), /já foi atingida/);
+});
+
+test('informa quando os quatro navios foram afundados', () => {
+    const jogo = criarJogoConfigurado();
+    for (const navio of jogo.navios) {
+        for (const casa of navio.casas) {
+            const [linha, coluna] = casa.split(',').map(Number);
+            jogo.atirar(linha, coluna);
+        }
+    }
+    assert.equal(jogo.todosAfundados(), true);
 });
