@@ -4,9 +4,9 @@ Projeto de testes automatizados de **Batalha Naval**.
 
 ## 1. Colaborador(es)
 
-- Colaborador 1: ____________________________________
+- Colaborador 1: Heloísa Sayuri Silva Saito
 
-- Colaborador 2: ____________________________________
+- Colaborador 2: Maria Eduarda de Castro Lachima
 
 ## 2. Especificação do desafio
 
