@@ -1,4 +1,4 @@
-# Batalha Naval — desafio de testes
+# Batalha Naval — Desafio de testes
 
 ## Desafio
 
