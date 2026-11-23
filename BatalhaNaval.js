@@ -68,3 +68,11 @@ class BatalhaNaval {
         navio.atingidas.add(posicao);
         return navio.atingidas.size === navio.tamanho ? 'afundado' : 'acerto';
     }
+
+    todosAfundados() {
+        return this.navios.length === 4 &&
+            this.navios.every((navio) => navio.atingidas.size === navio.tamanho);
+    }
+}
+
+module.exports = { BatalhaNaval };
