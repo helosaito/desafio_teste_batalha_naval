@@ -74,3 +74,14 @@ test('rejeita repetir um tiro', () => {
     assert.equal(jogo.atirar(9, 9), 'agua');
     assert.throws(() => jogo.atirar(9, 9), /já foi atingida/);
 });
+
+test('informa quando os quatro navios foram afundados', () => {
+    const jogo = criarJogoConfigurado();
+    for (const navio of jogo.navios) {
+        for (const casa of navio.casas) {
+            const [linha, coluna] = casa.split(',').map(Number);
+            jogo.atirar(linha, coluna);
+        }
+    }
+    assert.equal(jogo.todosAfundados(), true);
+});
