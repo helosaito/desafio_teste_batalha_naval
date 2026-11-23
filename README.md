@@ -36,7 +36,7 @@ A lista de nomes, a exigência de uma embarcação de cada tamanho e outras regr
 
 ## Como executar
 
-Requer Node.js 18 ou superior. Não há dependências externas. Na pasta deste projeto, execute:
+Requer Node.js 18 ou superior. Não há dependências externas, na pasta deste projeto, execute:
 
 ```bash
 node --test
