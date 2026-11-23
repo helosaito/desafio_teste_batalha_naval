@@ -10,9 +10,9 @@ A lista de nomes, a exigência de uma embarcação de cada tamanho e outras regr
 
 ## Colaboradores
 
-- Heloísa Sayuri Silva Saito
+- Heloísa Sayuri Silva Saito | RA: 24062631-2
 
-- Maria Eduarda de Castro Lachima
+- Maria Eduarda de Castro Lachima | RA: 24055202-2
 
 ## Arquivos
 
